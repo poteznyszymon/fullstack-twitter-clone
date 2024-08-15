@@ -13,7 +13,7 @@ const UserTile = ({ user }: userTileProps) => {
     <div className="w-full flex items-center justify-between">
       <div className="flex gap-2 items-center">
         <Link to={`/profile/${user?.username}`}>
-          <div className="w-9 h-9 rounded-full bg-white overflow-hidden">
+          <div className="w-9 h-9 rounded-full  overflow-hidden">
             <img
               className="object-contain"
               src={user?.profileImg || "/profile-skeleton.jpg"}

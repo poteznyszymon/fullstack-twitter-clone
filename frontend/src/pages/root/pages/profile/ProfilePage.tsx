@@ -3,9 +3,9 @@ import { IoArrowBack } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
 import { BsCalendar2Week } from "react-icons/bs";
 import { FaLink } from "react-icons/fa6";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "@/models/interfaces";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import NavSkeleton from "@/components/skeletons/NavSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import PostSkeleton from "@/components/skeletons/PostSkeleton";
@@ -17,17 +17,18 @@ import { MdEdit } from "react-icons/md";
 import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
 
 const ProfilePage = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const [feedType, setFeedType] = useState<"posts" | "likes">("posts");
-  const { username } = useParams();
+  const { toast } = useToast();
   const { follow } = useFollow();
+  const { username } = useParams();
+  const [feedType, setFeedType] = useState<"posts" | "likes">("posts");
+  const [profileImg, setProfileImg] = useState<string | null>(null);
+  const [coverImg, setCoverImg] = useState<string | null>(null);
+  const queryClinet = useQueryClient();
 
   const { data: authUser } = useQuery<User>({
     queryKey: ["authUser"],
   });
-
-  const xd = false;
 
   const {
     data: user,
@@ -55,8 +56,70 @@ const ProfilePage = () => {
     },
   });
 
+  const { mutateAsync: updateProfile, isPending: isUpdatingProfile } =
+    useMutation({
+      mutationFn: async () => {
+        try {
+          const res = await fetch("/api/user/update", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ coverImg, profileImg }),
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            throw new Error(data.error || "something went wrong");
+          }
+          return data;
+        } catch (error) {
+          const errorMessage =
+            (error as Error).message || "Unknown error occurred";
+
+          console.log(error);
+          toast({
+            variant: "destructive",
+            title: `${errorMessage}`,
+          });
+          throw error;
+        }
+      },
+      onSuccess: () => {
+        Promise.all([
+          queryClinet.invalidateQueries({ queryKey: ["authUser"] }),
+          queryClinet.invalidateQueries({ queryKey: ["userProfile"] }),
+        ]);
+        toast({
+          title: "User updated successfully",
+        });
+      },
+      onError: (error) => {
+        toast({
+          variant: "destructive",
+          title: `${error}`,
+        });
+      },
+    });
+
   const myProfile = authUser?._id === user?._id;
 
+  const handleImgChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    state: "coverImg" | "profileImg"
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (state === "coverImg") {
+          setCoverImg(reader.result as string);
+        } else if (state === "profileImg") {
+          setProfileImg(reader.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   useEffect(() => {
     refetch();
   }, [username, refetch]);
@@ -84,7 +147,7 @@ const ProfilePage = () => {
         <div className="w-full aspect-[3/1]  relative group/cover ">
           <img
             className="w-full h-full object-cover "
-            src={user?.coverImg || "/cover.png"}
+            src={coverImg || user?.coverImg || "/cover.png"}
             alt="cover-img"
           />
           <label htmlFor="cover">
@@ -93,32 +156,42 @@ const ProfilePage = () => {
                 <MdEdit />
               </div>
             )}
-            <input type="file" id="cover" hidden />
+            <input
+              type="file"
+              id="cover"
+              hidden
+              onChange={(e) => handleImgChange(e, "coverImg")}
+            />
           </label>
 
           <div className="w-28 h-28 border-4 border-black rounded-full absolute bottom-0 left-6 translate-y-[50%] group/avatar">
             <img
-              className="object-contain rounded-full"
-              src={user?.profileImg || "/profile-skeleton.jpg"}
+              className=" rounded-full w-full h-full"
+              src={profileImg || user?.profileImg || "/profile-skeleton.jpg"}
               alt="user-profile-photo"
             />
             {myProfile && (
               <label htmlFor="profile">
-                <div className="absolute top-0 right-0 text-twitter-blue bg-black p-2 rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
+                <div className="absolute top-0 right-0 text-twitter-blue bg-black p-2 rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer transition duration-200">
                   <MdEdit />
                 </div>
               </label>
             )}
-            <input id="profile" type="file" hidden />
+            <input
+              id="profile"
+              type="file"
+              hidden
+              onChange={(e) => handleImgChange(e, "profileImg")}
+            />
           </div>
         </div>
       ) : (
         <ProfileSkeleton />
       )}
-      <div className="h-20 flex justify-end items-center px-3 ">
+      <div className="h-20 flex justify-end items-center px-3 gap-2">
         {!isLoading && !isRefetching ? (
-          myProfile ? (
-            <EditProfileDialog />
+          myProfile && authUser ? (
+            <EditProfileDialog authUser={authUser} />
           ) : (
             <Button
               onClick={() => {
@@ -140,6 +213,23 @@ const ProfilePage = () => {
           )
         ) : (
           <Skeleton className="rounded-full w-24 h-10" />
+        )}
+        {(coverImg || profileImg) && (
+          <Button
+            onClick={async () => {
+              await updateProfile();
+              setProfileImg(null);
+              setCoverImg(null);
+            }}
+            className="rounded-full bg-twitter-blue text-white hover:bg-twitter-blue/90 flex items-center gap-1"
+          >
+            <p>{isUpdatingProfile ? "Updating" : "Update"}</p>
+            <div>
+              {isUpdatingProfile && (
+                <img className="w-4" src="/loading-icon-white.svg"></img>
+              )}
+            </div>
+          </Button>
         )}
       </div>
       <div className="flex flex-col px-3">

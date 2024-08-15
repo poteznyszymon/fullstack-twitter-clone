@@ -34,3 +34,8 @@ export interface GetPostsResponse {
   totalPages: number;
   currentPage: number;
 }
+
+export interface changeImages {
+  coverImg: string | null;
+  profileImg: string | null;
+}

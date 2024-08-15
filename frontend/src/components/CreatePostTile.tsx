@@ -80,7 +80,7 @@ const CreatePostTile = () => {
     <form onSubmit={(e) => handleSubmit(e)}>
       <div className="border-b-2 border-dark-gray flex p-3 gap-3">
         <Link to={`profile/${authUser?.username}`}>
-          <div className="h-10 w-10 bg-white rounded-full overflow-hidden">
+          <div className="h-10 w-10  rounded-full overflow-hidden">
             <img
               className="object-contain"
               src={authUser?.profileImg || "/profile-skeleton.jpg"}

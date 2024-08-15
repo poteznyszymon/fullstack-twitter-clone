@@ -19,7 +19,7 @@ const BookmarksPage = () => {
           </div>
         </Link>
       </div>
-      <div className="w-full h-screen items-center mt-14 text-white flex flex-col">
+      <div className="w-full h-screen items-center mt-20 sm:mt-14 text-white flex flex-col">
         <div>
           <h1 className="text-3xl font-bold">Save posts for later</h1>
           <p className="text-secondary-gray">

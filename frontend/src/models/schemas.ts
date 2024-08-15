@@ -17,3 +17,13 @@ export const loginFormSchema = z.object({
   username: z.string().min(1, { message: "Username cannot be empty" }),
   password: z.string().min(1, { message: "Password cannot be empty" }),
 });
+
+export const updateProfieSchema = z.object({
+  fullname: z.string(),
+  username: z.string(),
+  email: z.string(),
+  bio: z.string(),
+  link: z.string(),
+  newPassword: z.string(),
+  password: z.string(),
+});

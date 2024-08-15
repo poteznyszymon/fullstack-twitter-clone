@@ -35,7 +35,10 @@ const PostComponent = ({ post }: PostProps) => {
         </div>
         <div className="tracking-tight">{post.text}</div>
         {post.img && (
-          <img className="h-80 rounded-2xl mt-3 border-2 object-contain" src={post.img}></img>
+          <img
+            className="rounded-2xl mt-3 border-2 object-contain h-full"
+            src={post.img}
+          ></img>
         )}
         <div className="flex mt-3">
           <div className="flex gap-1 items-center cursor-pointer">

@@ -68,7 +68,9 @@ const LeftPanel = () => {
         <Link to="/">
           <div className="flex gap-3 items-center py-2 hover:bg-white/10 rounded-full pl-0 xl:pl-3 mx-1 xl:mx-0 justify-center xl:justify-start transition-all duration-300">
             <HomeSvg className="w-7" />
-            <h2 className="font-bold text-lg tracking-tighter hidden xl:block">Home</h2>
+            <h2 className="font-bold text-lg tracking-tighter hidden xl:block">
+              Home
+            </h2>
           </div>
         </Link>
         <Link to={`/notifications`}>
@@ -100,10 +102,10 @@ const LeftPanel = () => {
         <Popover>
           <PopoverTrigger>
             <div className="h-16 w-full cursor-pointer active:bg-white/20 hover:bg-white/10 transition-all duration-300 rounded-full flex items-center  px-0 py-3 xl:px-4 justify-center">
-              <div className="w-10 h-10 bg-white rounded-full ml-3 xl:ml-0 overflow-hidden">
+              <div className="w-10 h-10 rounded-full ml-3 xl:ml-0 overflow-hidden">
                 <img
                   src={authUser.profileImg || "/profile-skeleton.jpg"}
-                  className="object-contain"
+                  className="object-contain rounded-full"
                   alt="profile-image"
                 />
               </div>
