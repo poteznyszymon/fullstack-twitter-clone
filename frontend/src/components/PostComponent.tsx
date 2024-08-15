@@ -22,7 +22,7 @@ const PostComponent = ({ post }: PostProps) => {
         </div>
       </Link>
       <div className="flex flex-col w-full">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Link to={`/profile/${post.user.username}`}>
             <h3 className="font-bold text-sm hover:underline">
               {post.user.fullname}

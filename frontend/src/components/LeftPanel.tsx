@@ -68,13 +68,13 @@ const LeftPanel = () => {
         <Link to="/">
           <div className="flex gap-3 items-center py-2 hover:bg-white/10 rounded-full pl-0 xl:pl-3 mx-1 xl:mx-0 justify-center xl:justify-start transition-all duration-300">
             <HomeSvg className="w-7" />
-            <h2 className="font-bold tracking-tighter hidden xl:block">Home</h2>
+            <h2 className="font-bold text-lg tracking-tighter hidden xl:block">Home</h2>
           </div>
         </Link>
         <Link to={`/notifications`}>
           <div className="flex gap-3 items-center py-2 hover:bg-white/10 rounded-full pl-0 xl:pl-3 mx-1 xl:mx-0 justify-center xl:justify-start transition-all duration-300">
             <NotificationSvg className="w-7" />
-            <h2 className="font-bold tracking-tighter hidden xl:block">
+            <h2 className="font-bold text-lg tracking-tighter hidden xl:block">
               Notifications
             </h2>
           </div>
@@ -82,7 +82,7 @@ const LeftPanel = () => {
         <Link to={`/bookmarks`}>
           <div className="flex gap-3 items-center py-2 hover:bg-white/10 rounded-full pl-0 xl:pl-3 mx-1 xl:mx-0 justify-center xl:justify-start transition-all duration-300">
             <BookmarksSvg className="w-7" />
-            <h2 className="font-bold tracking-tighter hidden xl:block">
+            <h2 className="font-bold text-lg tracking-tighter hidden xl:block">
               Bookmarks
             </h2>
           </div>
@@ -90,7 +90,7 @@ const LeftPanel = () => {
         <Link to={`/profile/${authUser?.username}`}>
           <div className="flex gap-3 items-center py-2 hover:bg-white/10 rounded-full pl-0 xl:pl-3 mx-1 xl:mx-0 justify-center xl:justify-start transition-all duration-300">
             <ProfileSvg className="w-7" />
-            <h2 className="font-bold tracking-tighter hidden xl:block">
+            <h2 className="font-bold text-lg tracking-tighter hidden xl:block">
               Profile
             </h2>
           </div>

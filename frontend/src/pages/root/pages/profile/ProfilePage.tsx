@@ -13,6 +13,8 @@ import { useToast } from "@/components/ui/use-toast";
 import useFollow from "@/hooks/useFollow";
 import EditProfileDialog from "./EditProfileDialog";
 import { formatMemberSinceDate } from "@/utils/dataFormat";
+import { MdEdit } from "react-icons/md";
+import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
 
 const ProfilePage = () => {
   const { toast } = useToast();
@@ -24,6 +26,8 @@ const ProfilePage = () => {
   const { data: authUser } = useQuery<User>({
     queryKey: ["authUser"],
   });
+
+  const xd = false;
 
   const {
     data: user,
@@ -76,15 +80,41 @@ const ProfilePage = () => {
           <NavSkeleton />
         )}
       </div>
-      <div className="w-full aspect-[3] bg-cover-img relative">
-        <div className="w-28 h-28 border-4 border-black rounded-full absolute bottom-0 left-6 translate-y-[50%] overflow-hidden">
+      {!isLoading && !isRefetching ? (
+        <div className="w-full aspect-[3/1]  relative group/cover ">
           <img
-            className="object-contain"
-            src={user?.coverImg || "/profile-skeleton.jpg"}
-            alt="user-profile-photo"
+            className="w-full h-full object-cover "
+            src={user?.coverImg || "/cover.png"}
+            alt="cover-img"
           />
+          <label htmlFor="cover">
+            {myProfile && (
+              <div className="absolute top-1 right-1 text-twitter-blue bg-black p-2 rounded-full cursor-pointer opacity-0 group-hover/cover:opacity-100 transition duration-200">
+                <MdEdit />
+              </div>
+            )}
+            <input type="file" id="cover" hidden />
+          </label>
+
+          <div className="w-28 h-28 border-4 border-black rounded-full absolute bottom-0 left-6 translate-y-[50%] group/avatar">
+            <img
+              className="object-contain rounded-full"
+              src={user?.profileImg || "/profile-skeleton.jpg"}
+              alt="user-profile-photo"
+            />
+            {myProfile && (
+              <label htmlFor="profile">
+                <div className="absolute top-0 right-0 text-twitter-blue bg-black p-2 rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer">
+                  <MdEdit />
+                </div>
+              </label>
+            )}
+            <input id="profile" type="file" hidden />
+          </div>
         </div>
-      </div>
+      ) : (
+        <ProfileSkeleton />
+      )}
       <div className="h-20 flex justify-end items-center px-3 ">
         {!isLoading && !isRefetching ? (
           myProfile ? (

@@ -62,3 +62,38 @@ export const getAllPosts = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const getFollowingPosts = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const totalPosts = await Post.countDocuments();
+    const totalPages = Math.ceil(totalPosts / limit);
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const following = user.following;
+    const posts = await Post.find({ user: { $in: following } })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate({ path: "user", select: "-password" })
+      .populate({ path: "comments.user", select: "-password" });
+
+    if (posts.length === 0) {
+      return res.status(200).json({ posts: [], totalPages, currentPage: page });
+    }
+
+    res.status(200).json({ posts, totalPages, currentPage: page });
+  } catch (error) {
+    console.log("Error in getFollowingPosts controller: ", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

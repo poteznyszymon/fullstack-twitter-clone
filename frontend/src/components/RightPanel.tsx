@@ -18,7 +18,7 @@ const RightPanel = () => {
   return (
     <>
       <div className="w-72 xl:w-80 h-screen hidden lg:flex flex-col text-text-main">
-        <div className="bg-dark-gray w-full h-11 rounded-full flex items-center sticky top-2 mx-5">
+        <div className="bg-dark-gray  h-11 rounded-full flex items-center fixed w-72 xl:w-80 top-2 mx-5">
           <label
             htmlFor="search"
             className="text-secondary-gray px-3 cursor-pointer"
