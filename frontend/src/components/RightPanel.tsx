@@ -32,24 +32,28 @@ const RightPanel = () => {
             placeholder="Search"
           />
         </div>
-        <div className="w-72 xl:w-80 border border-dark-gray mx-5 rounded-2xl fixed top-16 p-3 flex flex-col gap-4">
-          <h1 className="text-lg font-bold tracking-tighter">Who to follow</h1>
-          {isLoading && (
-            <div className="flex flex-col gap-3">
-              <SuggestedSkeleton />
-              <SuggestedSkeleton />
-              <SuggestedSkeleton />
-              <SuggestedSkeleton />
-            </div>
-          )}
-          {!isLoading && (
-            <div className="flex flex-col gap-3">
-              {suggestedUsers?.map((user) => (
-                <UserTile user={user} key={user._id} />
-              ))}
-            </div>
-          )}
-        </div>
+        {(suggestedUsers?.length || 0) > 0 && (
+          <div className="w-72 xl:w-80 border border-dark-gray mx-5 rounded-2xl fixed top-16 p-3 flex flex-col gap-4">
+            <h1 className="text-lg font-bold tracking-tighter">
+              Who to follow
+            </h1>
+            {isLoading && (
+              <div className="flex flex-col gap-3">
+                <SuggestedSkeleton />
+                <SuggestedSkeleton />
+                <SuggestedSkeleton />
+                <SuggestedSkeleton />
+              </div>
+            )}
+            {!isLoading && (
+              <div className="flex flex-col gap-3">
+                {suggestedUsers?.map((user) => (
+                  <UserTile user={user} key={user._id} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <div className="h-screen bg-black hidden sm:block sm:w-20 lg:hidden"></div>
     </>

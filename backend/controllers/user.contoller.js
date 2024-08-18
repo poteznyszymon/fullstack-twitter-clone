@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import Notification from "../models/notificationModel.js";
 import bcrypt from "bcryptjs";
 import { v2 } from "cloudinary";
 
@@ -72,8 +73,13 @@ export const followUser = async (req, res) => {
       await User.findByIdAndUpdate(id, { $push: { followers: userId } });
       await User.findByIdAndUpdate(userId, { $push: { following: id } });
 
-      // SENT NOTIFICATION
+      const notification = new Notification({
+        type: "follow",
+        from: req.user._id,
+        to: userToModify._id,
+      });
 
+      await notification.save();
       res.status(200).json({ message: "User followed successfully" });
     }
   } catch (error) {

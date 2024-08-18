@@ -9,7 +9,7 @@ const HomePage = () => {
 
   return (
     <div className="flex-1 min-h-screen max-w-xl border-r-2 border-l-2 border-dark-gray">
-      <div className="w-full h-14 flex border-b-2 border-dark-gray sticky top-0 z-10 bg-black bg-opacity-70 backdrop-blur-xl">
+      <div className="w-full h-14 flex border-b-2 border-dark-gray sticky top-0 z-10 bg-black bg-opacity-90 backdrop-blur-sm">
         <div
           className="relative w-1/2 flex justify-center items-center hover:bg-dark-gray transition-all duration-300 cursor-pointer"
           onClick={() => setFeedType("forYou")}

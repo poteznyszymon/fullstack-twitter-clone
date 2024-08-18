@@ -32,6 +32,7 @@ export interface CreatePostData {
 export interface GetPostsResponse {
   posts: Post[];
   totalPages: number;
+  hasNextPage: boolean;
   currentPage: number;
 }
 

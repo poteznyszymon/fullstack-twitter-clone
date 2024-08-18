@@ -1,16 +1,62 @@
-import { Post } from "@/models/interfaces";
+import { Post, User } from "@/models/interfaces";
 import BookmarksSvg from "@/svgs/BookmarksSvg";
 import CommentSvg from "@/svgs/CommentSvg";
 import HeartSvg from "@/svgs/HeartSvg";
 import RepostSvg from "@/svgs/RepostSvg";
 import { formatPostDate } from "@/utils/dataFormat";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useToast } from "./ui/use-toast";
 
 interface PostProps {
   post: Post;
 }
 
 const PostComponent = ({ post }: PostProps) => {
+  const { toast } = useToast();
+  const [commentHover, setCommentHover] = useState(false);
+  const [repostHover, setRepostHover] = useState(false);
+  const [heartHover, setHeartHover] = useState(false);
+  const [bookmarksHover, setBookmarksHover] = useState(false);
+
+  const { data: authUser } = useQuery<User>({ queryKey: ["authUser"] });
+  const likedPost = post.likes.includes(authUser?._id || "");
+  const queryClient = useQueryClient();
+
+  const { mutate: likePost, isPending: isLiking } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/like/${post._id}`, {
+          method: "POST",
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "something went wrong");
+        }
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: `${error.message}`,
+      });
+    },
+  });
+
+  const handleLike = () => {
+    if (isLiking) {
+      return;
+    }
+    likePost();
+  };
+
   return (
     <div className="flex gap-3 p-3 text-text-main border-b-2">
       <Link to={`/profile/${post.user.username}`}>
@@ -41,28 +87,71 @@ const PostComponent = ({ post }: PostProps) => {
           ></img>
         )}
         <div className="flex mt-3">
-          <div className="flex gap-1 items-center cursor-pointer">
-            <CommentSvg className="w-5" />
-            <p className="text-xs text-secondary-gray">
+          <div
+            className="flex gap-1 items-center cursor-pointer"
+            onMouseEnter={() => setCommentHover(true)}
+            onMouseLeave={() => setCommentHover(false)}
+          >
+            <CommentSvg
+              fill={commentHover ? "#169cfa" : "#71767B"}
+              className="w-5"
+            />
+            <p
+              className={`text-xs ${
+                commentHover ? "text-twitter-blue" : "text-secondary-gray"
+              }`}
+            >
               {post.comments.length}
             </p>
           </div>
           <div className="w-full flex justify-evenly">
-            <div className="flex items-center gap-1 cursor-pointer">
-              <RepostSvg className="w-5" />
-              <p className="text-xs text-secondary-gray">
+            <div
+              className="flex items-center gap-1 cursor-pointer "
+              onMouseEnter={() => setRepostHover(true)}
+              onMouseLeave={() => setRepostHover(false)}
+            >
+              <RepostSvg
+                fill={repostHover ? "#27bf13" : "#71767B"}
+                className="w-5"
+              />
+              <p
+                className={`text-xs ${
+                  repostHover ? "text-[#27bf13]" : "text-secondary-gray"
+                }`}
+              >
                 {post.comments.length}
               </p>
             </div>
-            <div className="flex items-center gap-1 cursor-pointer">
-              <HeartSvg className="w-5" />
-              <p className="text-xs text-secondary-gray">
-                {post.comments.length}
+            <div
+              className="flex items-center gap-1 cursor-pointer"
+              onMouseEnter={() => setHeartHover(true)}
+              onMouseLeave={() => setHeartHover(false)}
+              onClick={handleLike}
+            >
+              <HeartSvg
+                fill={heartHover || likedPost ? "#d43565" : "#71767B"}
+                className="w-5"
+              />
+              <p
+                className={`text-xs ${
+                  heartHover || likedPost
+                    ? "text-[#d43565]"
+                    : "text-secondary-gray"
+                }`}
+              >
+                {post.likes.length}
               </p>
             </div>
           </div>
-          <div className="flex gap-1 items-center cursor-pointer">
-            <BookmarksSvg fill="#71767B" className="w-5" />
+          <div
+            className="flex gap-1 items-center cursor-pointer"
+            onMouseEnter={() => setBookmarksHover(true)}
+            onMouseLeave={() => setBookmarksHover(false)}
+          >
+            <BookmarksSvg
+              fill={bookmarksHover ? "#169cfa" : "#71767B"}
+              className="w-5"
+            />
           </div>
         </div>
       </div>

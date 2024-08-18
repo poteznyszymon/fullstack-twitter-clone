@@ -8,13 +8,13 @@ import { User } from "@/models/interfaces";
 import { ChangeEvent, useEffect, useState } from "react";
 import NavSkeleton from "@/components/skeletons/NavSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
-import PostSkeleton from "@/components/skeletons/PostSkeleton";
 import { useToast } from "@/components/ui/use-toast";
 import useFollow from "@/hooks/useFollow";
 import EditProfileDialog from "./EditProfileDialog";
 import { formatMemberSinceDate } from "@/utils/dataFormat";
 import { MdEdit } from "react-icons/md";
 import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
+import Posts from "@/components/Posts";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ const ProfilePage = () => {
 
   return (
     <div className="flex-1 flex-col min-h-screen max-w-xl border-r-2 border-l-2 border-dark-gray text-text-main ">
-      <div className="h-14 w-full flex sticky top-0 z-10 bg-black bg-opacity-70 backdrop-blur-xl">
+      <div className="h-14 w-full flex sticky top-0 z-10 bg-black bg-opacity-90 backdrop-blur-sm">
         <Link to="/">
           <div className="w-16 h-full flex justify-center items-center">
             <div className="hover:bg-white/10 p-2 rounded-full">
@@ -135,9 +135,8 @@ const ProfilePage = () => {
           </div>
         </Link>
         {!isLoading && !isRefetching ? (
-          <div className="flex flex-col items-start pt-1">
+          <div className="flex  items-center">
             <h1 className="text-lg font-bold">{user?.username}</h1>
-            <p className="text-xs text-secondary-gray">18 posts</p>
           </div>
         ) : (
           <NavSkeleton />
@@ -325,10 +324,7 @@ const ProfilePage = () => {
             ></div>
           </div>
         </div>
-        <PostSkeleton />
-        <PostSkeleton />
-        <PostSkeleton />
-        <PostSkeleton />
+        <Posts user={authUser} feedType={feedType} />
       </div>
     </div>
   );

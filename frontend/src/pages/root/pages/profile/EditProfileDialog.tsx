@@ -111,7 +111,7 @@ const EditProfileDialog = ({ authUser }: EditProfileDialogProps) => {
           <DialogTitle>Edit you profile</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-2">
             <Input
               name="fullname"
               type="text"
